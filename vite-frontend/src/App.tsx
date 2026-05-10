@@ -13,7 +13,6 @@ import LimitPage from "@/pages/limit";
 import ConfigPage from "@/pages/config";
 import { SettingsPage } from "@/pages/settings";
 import ForwardCardSpeedEmbedder from "@/components/ForwardCardSpeedEmbedder";
-import ClipboardFallback from "@/components/ClipboardFallback";
 
 import AdminLayout from "@/layouts/admin";
 import H5Layout from "@/layouts/h5";
@@ -230,7 +229,6 @@ function App() {
         />
       </Routes>
       <ForwardCardSpeedEmbedder />
-      <ClipboardFallback />
     </>
   );
 }
