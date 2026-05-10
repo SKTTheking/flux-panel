@@ -51,18 +51,31 @@ const installClipboardFallback = () => {
     },
   };
 
-  try {
-    Object.defineProperty(navigator, "clipboard", {
-      configurable: true,
-      get: () => clipboard,
-    });
-  } catch {
-    if (nativeClipboard) {
-      try {
-        nativeClipboard.writeText = clipboard.writeText;
-      } catch {
-        // Leave the browser implementation untouched if it is read-only.
-      }
+  const defineClipboard = (target: object) => {
+    try {
+      Object.defineProperty(target, "clipboard", {
+        configurable: true,
+        get: () => clipboard,
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  if (defineClipboard(navigator)) {
+    return;
+  }
+
+  if (typeof Navigator !== "undefined" && defineClipboard(Navigator.prototype)) {
+    return;
+  }
+
+  if (nativeClipboard) {
+    try {
+      nativeClipboard.writeText = clipboard.writeText;
+    } catch {
+      // Leave the browser implementation untouched if it is read-only.
     }
   }
 };
