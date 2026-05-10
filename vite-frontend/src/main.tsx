@@ -33,31 +33,36 @@ const installClipboardFallback = () => {
   const nativeClipboard = navigator.clipboard;
   const nativeWriteText = nativeClipboard?.writeText?.bind(nativeClipboard);
 
-  const writeText = async (text: string) => {
-    if (nativeWriteText && window.isSecureContext) {
-      try {
-        await nativeWriteText(text);
-        return;
-      } catch {
-        // Use the textarea fallback when browser permission blocks Clipboard API.
+  const clipboard = {
+    ...nativeClipboard,
+    writeText: async (text: string) => {
+      if (nativeWriteText && window.isSecureContext) {
+        try {
+          await nativeWriteText(text);
+          return;
+        } catch {
+          // Use the textarea fallback when browser permission blocks Clipboard API.
+        }
       }
-    }
 
-    await copyTextWithTextarea(text);
+      await copyTextWithTextarea(text);
+    },
   };
 
-  try {
-    Object.defineProperty(navigator, "clipboard", {
-      configurable: true,
-      value: {
-        ...nativeClipboard,
-        writeText,
-      },
-    });
-  } catch {
-    if (nativeClipboard) {
-      nativeClipboard.writeText = writeText;
+  const defineClipboard = (target: object) => {
+    try {
+      Object.defineProperty(target, "clipboard", {
+        configurable: true,
+        get: () => clipboard,
+      });
+      return true;
+    } catch {
+      return false;
     }
+  };
+
+  if (!defineClipboard(navigator)) {
+    defineClipboard(Navigator.prototype);
   }
 };
 
