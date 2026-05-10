@@ -12,6 +12,7 @@ import ProfilePage from "@/pages/profile";
 import LimitPage from "@/pages/limit";
 import ConfigPage from "@/pages/config";
 import { SettingsPage } from "@/pages/settings";
+import ForwardCardSpeedEmbedder from "@/components/ForwardCardSpeedEmbedder";
 
 import AdminLayout from "@/layouts/admin";
 import H5Layout from "@/layouts/h5";
@@ -147,85 +148,88 @@ function App() {
   }, []);
 
   return (
-    <Routes>
-      <Route path="/" element={<LoginRoute />} />
-      <Route 
-        path="/change-password" 
-        element={
-          <ProtectedRoute skipLayout={true}>
-            <ChangePasswordPage />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/dashboard" 
-        element={
-          <ProtectedRoute>
-            <DashboardPage />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/forward" 
-        element={
-          <ProtectedRoute>
-            <ForwardPage />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/tunnel" 
-        element={
-          <ProtectedRoute>
-            <TunnelPage />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/node" 
-        element={
-          <ProtectedRoute>
-            <NodePage />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/user" 
-        element={
-          <ProtectedRoute useSimpleLayout={true}>
-            <UserPage />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/profile" 
-        element={
-          <ProtectedRoute>
-            <ProfilePage />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/limit" 
-        element={
-          <ProtectedRoute useSimpleLayout={true}>
-            <LimitPage />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/config" 
-        element={
-          <ProtectedRoute useSimpleLayout={true}>
-            <ConfigPage />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/settings" 
-        element={<SettingsPage />}
-      />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/" element={<LoginRoute />} />
+        <Route 
+          path="/change-password" 
+          element={
+            <ProtectedRoute skipLayout={true}>
+              <ChangePasswordPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard" 
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/forward" 
+          element={
+            <ProtectedRoute>
+              <ForwardPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/tunnel" 
+          element={
+            <ProtectedRoute>
+              <TunnelPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/node" 
+          element={
+            <ProtectedRoute>
+              <NodePage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/user" 
+          element={
+            <ProtectedRoute useSimpleLayout={true}>
+              <UserPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/profile" 
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/limit" 
+          element={
+            <ProtectedRoute useSimpleLayout={true}>
+              <LimitPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/config" 
+          element={
+            <ProtectedRoute useSimpleLayout={true}>
+              <ConfigPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/settings" 
+          element={<SettingsPage />}
+        />
+      </Routes>
+      <ForwardCardSpeedEmbedder />
+    </>
   );
 }
 

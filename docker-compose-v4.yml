@@ -54,7 +54,10 @@ services:
       start_period: 90s
 
   frontend:
-    image: bqlpfy/vite-frontend:1.4.3
+    build:
+      context: ./vite-frontend
+      dockerfile: Dockerfile
+    image: flux-panel-frontend:realtime
     container_name: vite-frontend
     restart: unless-stopped
     ports:
