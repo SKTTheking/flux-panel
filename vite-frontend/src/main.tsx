@@ -21,12 +21,14 @@ const copyTextWithTextarea = (text: string): Promise<void> => {
   textarea.select();
   textarea.setSelectionRange(0, textarea.value.length);
 
-  const copied = document.execCommand("copy");
-  document.body.removeChild(textarea);
-
-  return copied
-    ? Promise.resolve()
-    : Promise.reject(new Error("Fallback clipboard copy failed"));
+  try {
+    const copied = document.execCommand("copy");
+    return copied
+      ? Promise.resolve()
+      : Promise.reject(new Error("Fallback clipboard copy failed"));
+  } finally {
+    document.body.removeChild(textarea);
+  }
 };
 
 const installClipboardFallback = () => {
@@ -34,7 +36,7 @@ const installClipboardFallback = () => {
   const nativeWriteText = nativeClipboard?.writeText?.bind(nativeClipboard);
 
   const clipboard = {
-    ...nativeClipboard,
+    ...(nativeClipboard || {}),
     writeText: async (text: string) => {
       if (nativeWriteText && window.isSecureContext) {
         try {
@@ -49,24 +51,27 @@ const installClipboardFallback = () => {
     },
   };
 
-  const defineClipboard = (target: object) => {
-    try {
-      Object.defineProperty(target, "clipboard", {
-        configurable: true,
-        get: () => clipboard,
-      });
-      return true;
-    } catch {
-      return false;
+  try {
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      get: () => clipboard,
+    });
+  } catch {
+    if (nativeClipboard) {
+      try {
+        nativeClipboard.writeText = clipboard.writeText;
+      } catch {
+        // Leave the browser implementation untouched if it is read-only.
+      }
     }
-  };
-
-  if (!defineClipboard(navigator)) {
-    defineClipboard(Navigator.prototype);
   }
 };
 
-installClipboardFallback();
+try {
+  installClipboardFallback();
+} catch (error) {
+  console.warn("Clipboard fallback unavailable:", error);
+}
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
