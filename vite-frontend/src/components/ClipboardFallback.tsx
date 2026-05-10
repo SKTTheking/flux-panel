@@ -30,36 +30,22 @@ const fallbackCopy = (text: string): boolean => {
 
 export default function ClipboardFallback() {
   useEffect(() => {
-    const originalClipboard = navigator.clipboard;
-    const originalWriteText = originalClipboard?.writeText?.bind(originalClipboard);
+    // 不覆盖浏览器原生 clipboard，避免部分浏览器点击按钮后白屏。
+    // 只在 HTTP 页面里 navigator.clipboard 不存在时，补一个最小可用的 writeText。
+    if (navigator.clipboard?.writeText) return;
 
     const writeText = async (text: string) => {
-      if (originalWriteText && window.isSecureContext) {
-        try {
-          await originalWriteText(text);
-          return;
-        } catch {
-          // fallback below
-        }
-      }
-
-      if (fallbackCopy(text)) {
-        return;
-      }
-
+      if (fallbackCopy(text)) return;
       throw new Error("复制失败，请手动选择文本复制");
     };
 
     try {
       Object.defineProperty(navigator, "clipboard", {
         configurable: true,
-        value: {
-          ...(originalClipboard || {}),
-          writeText,
-        },
+        value: { writeText },
       });
     } catch {
-      // Some browsers may not allow redefining navigator.clipboard.
+      // 不允许补 clipboard 时保持原状，让页面自己的错误处理接管。
     }
   }, []);
 
